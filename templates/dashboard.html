@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>{{ user.name }} - Dashboard</title>
+  </head>
+  <body>
+    <h1>{{ user.name }} - Dashboard</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <ul>
+        {% for category, message in messages %}
+          <li><strong>{{ category }}</strong>: {{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    {% endwith %}
+
+    <ul>
+      <li><a href="{{ url_for('manage_categories', user_id=user.id) }}">Manage categories</a></li>
+      <li><a href="{{ url_for('manage_budgets', user_id=user.id) }}">Set monthly budgets</a></li>
+      <li><a href="{{ url_for('create_expense', user_id=user.id) }}">Log an expense</a></li>
+      <li><a href="{{ url_for('list_expenses', user_id=user.id) }}">View recent expenses</a></li>
+      <li><a href="{{ url_for('monthly_report', user_id=user.id) }}">Monthly report</a></li>
+    </ul>
+
+    <p><a href="{{ url_for('index') }}">Back to users</a></p>
+  </body>
+</html>
+
+

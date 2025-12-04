@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Expenses - {{ user.name }}</title>
+  </head>
+  <body>
+    <h1>Recent expenses for {{ user.name }}</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <ul>
+        {% for category, message in messages %}
+          <li><strong>{{ category }}</strong>: {{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    {% endwith %}
+
+    <p><a href="{{ url_for('create_expense', user_id=user.id) }}">Log another expense</a></p>
+
+    <table border="1" cellpadding="4">
+      <tr>
+        <th>Date</th>
+        <th>Category</th>
+        <th>Amount</th>
+        <th>Description</th>
+      </tr>
+      {% for expense in expenses %}
+      <tr>
+        <td>{{ expense.date.strftime('%Y-%m-%d') }}</td>
+        <td>{{ categories[expense.category_id].name }}</td>
+        <td>{{ '%.2f'|format(expense.amount) }}</td>
+        <td>{{ expense.description or '' }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="4">No expenses recorded yet.</td></tr>
+      {% endfor %}
+    </table>
+
+    <p><a href="{{ url_for('dashboard', user_id=user.id) }}">Back to dashboard</a></p>
+  </body>
+</html>
+
+

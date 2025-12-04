@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>{{ user.name }} - Budgets</title>
+  </head>
+  <body>
+    <h1>Budgets for {{ user.name }}</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <ul>
+        {% for category, message in messages %}
+          <li><strong>{{ category }}</strong>: {{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    {% endwith %}
+
+    <form method="get">
+      <label for="month">Month</label>
+      <input id="month" name="month" type="month" value="{{ month.strftime('%Y-%m') }}">
+      <button type="submit">Change month</button>
+    </form>
+
+    <h2>Set budgets for {{ month.strftime('%B %Y') }}</h2>
+    <form method="post">
+      <input type="hidden" name="month" value="{{ month.strftime('%Y-%m') }}">
+      <table border="1" cellpadding="4">
+        <tr>
+          <th>Category</th>
+          <th>Budget amount</th>
+        </tr>
+        {% for category in categories %}
+        <tr>
+          <td>{{ category.name }}</td>
+          <td>
+            {% set existing = existing_budgets.get(category.id) %}
+            <input
+              name="budget_{{ category.id }}"
+              type="number"
+              min="0"
+              step="0.01"
+              value="{{ existing.amount if existing else '' }}"
+            >
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="2">Define at least one category first.</td></tr>
+        {% endfor %}
+      </table>
+      <button type="submit">Save budgets</button>
+    </form>
+
+    <p><a href="{{ url_for('dashboard', user_id=user.id) }}">Back to dashboard</a></p>
+  </body>
+</html>
+
+

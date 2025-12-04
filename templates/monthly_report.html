@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Monthly Report - {{ user.name }}</title>
+  </head>
+  <body>
+    <h1>Monthly report for {{ user.name }}</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <ul>
+        {% for category, message in messages %}
+          <li><strong>{{ category }}</strong>: {{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    {% endwith %}
+
+    <form method="get">
+      <label for="month">Month</label>
+      <input id="month" name="month" type="month" value="{{ month.strftime('%Y-%m') }}">
+      <button type="submit">Show report</button>
+    </form>
+
+    <h2>Summary for {{ month.strftime('%B %Y') }}</h2>
+    <p><strong>Total spent:</strong> {{ '%.2f'|format(total_spent) }}</p>
+
+    <h2>By category</h2>
+    <table border="1" cellpadding="4">
+      <tr>
+        <th>Category</th>
+        <th>Budget</th>
+        <th>Spent</th>
+        <th>Remaining</th>
+        <th>Status</th>
+      </tr>
+      {% for row in per_category %}
+      <tr>
+        <td>{{ row.category.name }}</td>
+        <td>{{ '%.2f'|format(row.budget) }}</td>
+        <td>{{ '%.2f'|format(row.spent) }}</td>
+        <td>{{ '%.2f'|format(row.remaining) }}</td>
+        <td>
+          {% if row.status == 'exceeded' %}
+            Exceeded
+          {% elif row.status == 'near_limit' %}
+            10% or less remaining
+          {% else %}
+            OK
+          {% endif %}
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5">Define categories and budgets first.</td></tr>
+      {% endfor %}
+    </table>
+
+    <p><a href="{{ url_for('dashboard', user_id=user.id) }}">Back to dashboard</a></p>
+  </body>
+</html>
+
+
